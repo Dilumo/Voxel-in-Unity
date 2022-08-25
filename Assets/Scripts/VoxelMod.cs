@@ -3,7 +3,7 @@
 public class VoxelMod
 {
     public Vector3 position;
-    public byte id;
+    public readonly byte id;
 
 
     public VoxelMod()

@@ -1,23 +1,26 @@
 ﻿using UnityEngine;
 
-[System.Serializable]
-public class VertData
+namespace Data
 {
-    public Vector3 position;
-    public Vector2 uv;
-
-    public VertData(Vector3 pos, Vector2 uvValue)
+    [System.Serializable]
+    public class VertData
     {
-        position = pos;
-        uv = uvValue;
-    }
+        public Vector3 position;
+        public Vector2 uv;
+
+        public VertData(Vector3 pos, Vector2 uvValue)
+        {
+            position = pos;
+            uv = uvValue;
+        }
 
 
-    public Vector3 GetRotatePosition(Vector3 angle)
-    {
-        Vector3 center = new Vector3(.5f, .5f, .5f);
-        Vector3 direction = position - center;
-        direction = Quaternion.Euler(angle) * direction;
-        return direction + center;
+        public Vector3 GetRotatePosition(Vector3 angle)
+        {
+            var center = new Vector3(.5f, .5f, .5f);
+            var direction = position - center;
+            direction = Quaternion.Euler(angle) * direction;
+            return direction + center;
+        }
     }
 }

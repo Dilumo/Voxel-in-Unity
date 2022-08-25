@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 using System.IO;
+using Data;
 
 public class ControllerMainMenu : MonoBehaviour
 {
@@ -38,9 +39,9 @@ public class ControllerMainMenu : MonoBehaviour
 
     public void GameSettings()
     {
-        sldViewDistance.value = settings.ViewDistanceInChunks;
+        sldViewDistance.value = settings.viewDistanceInChunks;
         UpdateViewDistanceSlider();
-        sldMouseSensitivity.value = settings.MouseSensitivity;
+        sldMouseSensitivity.value = settings.mouseSensitivity;
         UpdateMouseSensitivitySlider();
         dpdClouds.value = (int)settings.cloudStyle;
 
@@ -75,8 +76,8 @@ public class ControllerMainMenu : MonoBehaviour
 
     public void LeaveSettings()
     {
-        settings.ViewDistanceInChunks = (int)sldViewDistance.value;
-        settings.MouseSensitivity = sldMouseSensitivity.value;
+        settings.viewDistanceInChunks = (int)sldViewDistance.value;
+        settings.mouseSensitivity = sldMouseSensitivity.value;
         settings.cloudStyle = (CloudStyle)dpdClouds.value;
 
         string jsonExport = JsonUtility.ToJson(settings);

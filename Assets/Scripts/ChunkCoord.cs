@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿using Data;
+using UnityEngine;
 
 public class ChunkCoord
 {
-    public int x;
-    public int z;
+    public readonly int x;
+    public readonly int z;
 
     public ChunkCoord()
     {
@@ -11,15 +12,15 @@ public class ChunkCoord
         z = 0;
     }
 
-    public ChunkCoord(int _x, int _z)
+    public ChunkCoord(int x, int z)
     {
-        x = _x;
-        z = _z;
+        this.x = x;
+        this.z = z;
     }
     public ChunkCoord(Vector3 pos)
     {
-        int xCheck = Mathf.FloorToInt(pos.x);
-        int zCheck = Mathf.FloorToInt(pos.z);
+        var xCheck = Mathf.FloorToInt(pos.x);
+        var zCheck = Mathf.FloorToInt(pos.z);
 
         x = xCheck / VoxelData.ChunkWidth;
         z = zCheck / VoxelData.ChunkWidth;

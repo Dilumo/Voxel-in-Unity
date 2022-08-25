@@ -5,19 +5,21 @@ using UnityEngine;
 public class CreativeInventory : MonoBehaviour
 {
     public GameObject slotPrefad;
-    World world;
+    private World _world;
 
-    List<ItemSlot> slots = new List<ItemSlot>();
+    private List<ItemSlot> _slots = new List<ItemSlot>();
 
     private void Start()
     {
-        world = GameObject.Find("World").GetComponent<World>(); // junk
-        for (int i = 1; i < world.blockTypes.Length; i++)
+        _world = GameObject.Find("World").GetComponent<World>(); // junk
+        for (var i = 1; i < _world.blockTypes.Length; i++)
         {
-            GameObject newSlot = Instantiate(slotPrefad, transform);
-            ItemStack stack = new ItemStack((byte)i, 64);
-            ItemSlot slot = new ItemSlot(newSlot.GetComponent<UiItemSlot>(), stack);
-            slot.isCreative = true;
+            var newSlot = Instantiate(slotPrefad, transform);
+            var stack = new ItemStack((byte)i, 64);
+            var slot = new ItemSlot(newSlot.GetComponent<UiItemSlot>(), stack)
+            {
+                isCreative = true
+            };
         }
     }
 }

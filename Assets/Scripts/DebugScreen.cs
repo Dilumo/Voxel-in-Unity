@@ -1,78 +1,66 @@
 using System.Collections;
 using System.Collections.Generic;
+using Data;
 using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Text))]
 public class DebugScreen : MonoBehaviour
 {
-    World world;
-    Text text;
+    private World _world;
+    private Text _text;
 
-    float frameRate;
-    float timer;
+    private float _frameRate;
+    private float _timer;
 
-    int halfWorldSizeInVoxels;
-    int halfWorldSizeInChunks;
+    private int _halfWorldSizeInVoxels;
+    private int _halfWorldSizeInChunks;
 
     private void Start()
     {
-        world = GameObject.Find("World").GetComponent<World>(); // junk
-        text = GetComponent<Text>();
+        _world = GameObject.Find("World").GetComponent<World>(); // junk
+        _text = GetComponent<Text>();
 
-        halfWorldSizeInVoxels = VoxelData.WorldSizeInVoxels / 2;
-        halfWorldSizeInChunks = VoxelData.WorldSizeInChunks / 2;
+        _halfWorldSizeInVoxels = VoxelData.WorldSizeInVoxels / 2;
+        _halfWorldSizeInChunks = VoxelData.WorldSizeInChunks / 2;
     }
 
     private void Update()
     {
-        if (world.inUI) return;
+        if (_world.inUI) return;
 
-        Vector3 posPLayer = world.playerTrans.transform.position;
+        var posPLayer = _world.playerTrans.transform.position;
 
-        string debugText = "Code a game like Minecraft in Unity...";
+        var debugText = "Code a game like Minecraft in Unity...";
         debugText += "\n";
-        debugText += frameRate + " fps";
+        debugText += _frameRate + " fps";
         debugText += "\n\n";
-        debugText += $"Position: [{Mathf.FloorToInt(posPLayer.x) -  halfWorldSizeInVoxels}, {Mathf.FloorToInt(posPLayer.y)}, {Mathf.FloorToInt(posPLayer.x) - halfWorldSizeInVoxels}]";
+        debugText += $"Position: [{Mathf.FloorToInt(posPLayer.x) -  _halfWorldSizeInVoxels}, {Mathf.FloorToInt(posPLayer.y)}, {Mathf.FloorToInt(posPLayer.x) - _halfWorldSizeInVoxels}]";
         debugText += "\n";
-        debugText += $"Chunk: [{world.playerChunkCoord.x - halfWorldSizeInChunks}, {world.playerChunkCoord.z - halfWorldSizeInChunks}]";
+        debugText += $"Chunk: [{_world.playerChunkCoord.x - _halfWorldSizeInChunks}, {_world.playerChunkCoord.z - _halfWorldSizeInChunks}]";
 
-        string direction = "";
-
-        switch (world.player.orientation)
+        var direction = _world.player.orientation switch
         {
-            case 0:
-                direction = "South";
-                break;
-            case 5:
-                direction = "East";
-                break;
-            case 1:
-                direction = "North";
-                break;
-            case 4:
-                direction = "West";
-                break;
-            default:
-                direction = "???";
-                break;
-
-        }
+            0 => "South",
+            5 => "East",
+            1 => "North",
+            4 => "West",
+            _ => "???"
+        };
 
         debugText += "\n";
 
         debugText += $"Direction facing: {direction}";
 
 
-        text.text = debugText;
+        _text.text = debugText;
 
-        if (timer > 1f)
+        if (_timer > 1f)
         {
-            frameRate = (int)(1f / Time.unscaledDeltaTime);
-            timer = 0;
+            _frameRate = (int)(1f / Time.unscaledDeltaTime);
+            _timer = 0;
         }
         else
-            timer += Time.deltaTime;
+            _timer += Time.deltaTime;
     }
 }

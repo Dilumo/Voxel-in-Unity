@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Data;
 using UnityEngine;
 
 [System.Serializable]
@@ -36,11 +37,11 @@ public class ChunkData
                     map[x, y, z] = new VoxelState(World.Instance.GetVoxel(voxelGlobalPos), this, new Vector3Int(x, y, z));
                     for (int f = 0; f < 6; f++)
                     {
-                        Vector3Int neighbourV3 = new Vector3Int(x, y, z) + VoxelData.facesCheck[f];
+                        Vector3Int neighbourV3 = new Vector3Int(x, y, z) + VoxelData.FacesCheck[f];
                         if (IsVoxelInChunk(neighbourV3))
                             map[x, y, z].neighbours[f] = VoxelFromV3Int(neighbourV3);
                         else
-                            map[x, y, z].neighbours[f] = World.Instance.worldData.GetVoxel(voxelGlobalPos + VoxelData.facesCheck[f]);
+                            map[x, y, z].neighbours[f] = World.Instance.worldData.GetVoxel(voxelGlobalPos + VoxelData.FacesCheck[f]);
                     }
                 }
 
@@ -54,13 +55,13 @@ public class ChunkData
 
         VoxelState voxel = map[pos.x, pos.y, pos.z];
         //BlockType newVoxel = World.Instance.blockTypes[idValue];
-        byte oldOpacity = voxel.properties.opacity;
+        byte oldOpacity = voxel.Properties.opacity;
 
         voxel.id = idValue;
         voxel.orientation = direction;
-        if (voxel.properties.opacity != oldOpacity &&
+        if (voxel.Properties.opacity != oldOpacity &&
             (pos.y == VoxelData.ChunkHeight - 1 ||
-            map[pos.x, pos.y + 1, pos.z].light == 15))
+            map[pos.x, pos.y + 1, pos.z].Light == 15))
             Lighting.CastNaturalLight(this,pos.x, pos.z, pos.y + 1);
 
         World.Instance.worldData.AddToModifiedChunkList(this);

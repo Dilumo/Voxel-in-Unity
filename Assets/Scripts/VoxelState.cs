@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Data;
 using UnityEngine;
 
 [System.Serializable]
@@ -10,65 +11,56 @@ public class VoxelState
     [System.NonSerialized] public ChunkData chunkData;
     [System.NonSerialized] public VoxelNeighbour neighbours;
     [System.NonSerialized] public Vector3Int position;
-    public byte light
+    public byte Light
     {
-        get { return _light; }
+        get => _light;
         set
         {
-            if (value != _light)
+            if (value == _light) return;
+            var oldLightValue = _light;
+            var oldCastValue = CastLight;
+
+            _light = value;
+            if (_light < oldLightValue)
             {
-                byte oldLightValue = _light;
-                byte oldCastValue = castLight;
-
-                _light = value;
-                if (_light < oldLightValue)
+                var neighbourToDarken = new List<int>();
+                for (var f = 0; f < 6; f++)
                 {
-                    List<int> neighbourToDarken = new List<int>();
-                    for (int f = 0; f < 6; f++)
-                    {
-                        if (neighbours[f] != null)
-                        {
-                            if (neighbours[f].light <= oldCastValue)
-                                neighbourToDarken.Add(f);
-                            else
-                                neighbours[f].PropogateLight();
-                        }
-                    }
-
-                    foreach(int i in neighbourToDarken)
-                    {
-                        neighbours[i].light = 0;
-                    }
-
-                    if (chunkData.chunk != null)
-                        World.Instance.AddChunkToUpdate(chunkData.chunk);
+                    if (neighbours[f] == null) continue;
+                    if (neighbours[f].Light <= oldCastValue)
+                        neighbourToDarken.Add(f);
+                    else
+                        neighbours[f].PropagateLight();
                 }
-                else if (_light > 1)
-                    PropogateLight();
+
+                foreach(var i in neighbourToDarken)
+                {
+                    neighbours[i].Light = 0;
+                }
+
+                if (chunkData.chunk != null)
+                    World.Instance.AddChunkToUpdate(chunkData.chunk);
             }
+            else if (_light > 1)
+                PropagateLight();
         }
     }
 
-    public float lightAsFloat
-    {
-        get { return (float)light * VoxelData.unitOfLight; }
-    }
-    public byte castLight
+    public float LightAsFloat => (float)Light * VoxelData.UnitOfLight;
+
+    public byte CastLight
     {
         get
         {
-            int lightLevel = _light - properties.opacity - 1;
+            var lightLevel = _light - Properties.opacity - 1;
             if (lightLevel < 0) lightLevel = 0;
             return (byte)lightLevel;
         }
     }
 
-    public Vector3Int globalPosition { get { return new Vector3Int(position.x + chunkData.position.x, position.y, position.z + chunkData.position.y); } }
+    public Vector3Int GlobalPosition => new Vector3Int(position.x + chunkData.position.x, position.y, position.z + chunkData.position.y);
 
-    public BlockType properties
-    {
-        get { return World.Instance.blockTypes[id]; }
-    }
+    public BlockType Properties => World.Instance.blockTypes[id];
 
     public VoxelState(byte idValue, ChunkData chunkDataValue, Vector3Int pos)
     {
@@ -77,19 +69,19 @@ public class VoxelState
         chunkData = chunkDataValue;
         neighbours = new VoxelNeighbour(this);
         position = pos;
-        light = 0;
+        Light = 0;
     }
 
-    public void PropogateLight()
+    public void PropagateLight()
     {
-        if (light < 2) return;
+        if (Light < 2) return;
 
-        for (int f = 0; f < 6; f++)
+        for (var f = 0; f < 6; f++)
         {
             if (neighbours[f] != null)
             {
-                if (neighbours[f].light < castLight)
-                    neighbours[f].light = castLight;
+                if (neighbours[f].Light < CastLight)
+                    neighbours[f].Light = CastLight;
             }
 
             if (chunkData.chunk != null)

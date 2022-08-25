@@ -17,23 +17,23 @@ public static class SaveSystem
         Debug.Log(savePath);
         Debug.Log($"<color=green>Saving {world.worldName}...</color>");
 
-        BinaryFormatter formatter = new BinaryFormatter();
-        FileStream stream = new FileStream($"{savePath}world.world", FileMode.Create);
+        var formatter = new BinaryFormatter();
+        var stream = new FileStream($"{savePath}world.world", FileMode.Create);
 
         formatter.Serialize(stream, world);
         stream.Close();
 
-        Thread thread = new Thread(() => SaveChunks(world));
+        var thread = new Thread(() => SaveChunks(world));
         thread.Start();
     }
 
     private static void SaveChunks(WorldData world)
     {
-        List<ChunkData> chunks = new List<ChunkData>(world.modifiedChunks); // becaues save is slow
+        var chunks = new List<ChunkData>(world.modifiedChunks); // becaues save is slow
         world.modifiedChunks.Clear();
 
-        int count = 0;
-        foreach (ChunkData chunk in chunks)
+        var count = 0;
+        foreach (var chunk in chunks)
         {
             SaveSystem.SaveChunk(chunk, world.worldName);
             count++;
@@ -43,16 +43,16 @@ public static class SaveSystem
 
     public static WorldData LoadWorld(string worldName, int seed = 0)
     {
-        string loadPath = $"{World.Instance.appPath}/saves/{worldName}/";
+        var loadPath = $"{World.Instance.appPath}/saves/{worldName}/";
 
         if (File.Exists($"{loadPath}world.world"))
         {
             Debug.Log($"<color=green>{worldName} found. Loading from save.</color>");
 
-            BinaryFormatter formatter = new BinaryFormatter();
-            FileStream stream = new FileStream($"{loadPath}world.world", FileMode.Open);
+            var formatter = new BinaryFormatter();
+            var stream = new FileStream($"{loadPath}world.world", FileMode.Open);
 
-            WorldData world = formatter.Deserialize(stream) as WorldData;
+            var world = formatter.Deserialize(stream) as WorldData;
             stream.Close();
 
             return new WorldData(world);
@@ -61,7 +61,7 @@ public static class SaveSystem
         {
             Debug.Log($"<color=yellow>{worldName} not found. Create world.</color>");
 
-            WorldData world = new WorldData(worldName, seed);
+            var world = new WorldData(worldName, seed);
 
             SaveWorld(world);
 

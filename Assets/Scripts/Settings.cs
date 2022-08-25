@@ -1,20 +1,22 @@
 using System.IO;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [System.Serializable]
 public class Settings
 {
-    [Header("Game Data")]
-    public string Version = "0.0.01";
+    [FormerlySerializedAs("Version")] [Header("Game Data")]
+    public string version = "0.0.01";
 
-    [Header("Performace")]
-    public int LoadDistance = 3;
-    public int ViewDistanceInChunks = 3;
+    [FormerlySerializedAs("LoadDistance")] [Header("Performance")]
+    public int loadDistance = 3;
+    [FormerlySerializedAs("ViewDistanceInChunks")] public int viewDistanceInChunks = 3;
     public CloudStyle cloudStyle = CloudStyle.Fast;
 
+    [FormerlySerializedAs("MouseSensitivity")]
     [Header ("Controls")]
     [Range (0.5f, 3.5f)]
-    public float MouseSensitivity = 2f;
+    public float mouseSensitivity = 2f;
 
     //[Header ("World Generation Values")]
     //public int Seed = 20161991;

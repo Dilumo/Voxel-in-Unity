@@ -12,22 +12,13 @@ public class UiItemSlot : MonoBehaviour
     public Image slotIcon;
     public Text slotAmount;
 
-    World world;
+    private World _world;
 
-    public bool HasItem
-    {
-        get 
-        {
-            if (itemSlot == null)
-                return false;
-            else
-                return itemSlot.HasItem;
-        }
-    }
+    public bool HasItem => itemSlot is { HasItem: true };
 
     private void Awake()
     {
-        world = GameObject.Find("World").GetComponent<World>(); // junk
+        _world = GameObject.Find("World").GetComponent<World>(); // junk
     }
 
     public void Link(ItemSlot item)
@@ -49,9 +40,9 @@ public class UiItemSlot : MonoBehaviour
 
     public void UpdateSlot()
     {
-        if (itemSlot != null && itemSlot.HasItem)
+        if (itemSlot is { HasItem: true })
         {
-            slotIcon.sprite = world.blockTypes[itemSlot.itemStack.id].icon;
+            slotIcon.sprite = _world.blockTypes[itemSlot.itemStack.id].icon;
             slotAmount.text = itemSlot.itemStack.amount.ToString();
             slotIcon.enabled = true;
             slotAmount.enabled = true;
@@ -60,7 +51,7 @@ public class UiItemSlot : MonoBehaviour
             Clear();
     }
 
-    public void Clear()
+    private void Clear()
     {
         slotIcon.sprite = null;
         slotAmount.text = "";

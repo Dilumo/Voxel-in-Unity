@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Data;
 using UnityEngine;
 
 public static class Lighting
@@ -7,8 +8,8 @@ public static class Lighting
 
     public static void RecalculateNaturalLight(ChunkData chunkData)
     {
-        for (int x = 0; x < VoxelData.ChunkWidth; x++)
-            for (int z = 0; z < VoxelData.ChunkWidth; z++)
+        for (var x = 0; x < VoxelData.ChunkWidth; x++)
+            for (var z = 0; z < VoxelData.ChunkWidth; z++)
                 CastNaturalLight(chunkData, x, z, VoxelData.ChunkHeight - 1);
     }
 
@@ -17,24 +18,24 @@ public static class Lighting
         if(startY > VoxelData.ChunkHeight -1)
         {
             startY = VoxelData.ChunkHeight - 1;
-            Debug.Log("<color=yellow>Attempted to cast natural light from above world.</color>");
+            //Debug.Log("<color=yellow>Attempted to cast natural light from above world.</color>");
         }
 
-        bool obstructed = false;
+        var obstructed = false;
 
-        for (int y = startY; y > -1; y--)
+        for (var y = startY; y > -1; y--)
         {
-            VoxelState voxel = chunkData.map[x, y, z];
+            var voxel = chunkData.map[x, y, z];
 
             if (obstructed)
-                voxel.light = 0;
-            else if (voxel.properties.opacity > 0)
+                voxel.Light = 0;
+            else if (voxel.Properties.opacity > 0)
             {
-                voxel.light = 0;
+                voxel.Light = 0;
                 obstructed = true;
             }
             else
-                voxel.light = 15;
+                voxel.Light = 15;
 
         }
     }

@@ -1,35 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class DragAndDropHandler : MonoBehaviour
 {
     [SerializeField]
     private UiItemSlot cursorSlot = null;
-    private ItemSlot cursorItemSlot;
+    private ItemSlot _cursorItemSlot;
 
-    [SerializeField]
-    private GraphicRaycaster m_Raycaster = null;
-    private PointerEventData m_PointerEventData;
+    [FormerlySerializedAs("m_Raycaster")] [SerializeField]
+    private GraphicRaycaster mRaycaster = null;
+    private PointerEventData _mPointerEventData;
 
-    [SerializeField]
-    private EventSystem m_EventSystem = null;
+    [FormerlySerializedAs("m_EventSystem")] [SerializeField]
+    private EventSystem mEventSystem = null;
 
-    World world;
+    private World _world;
 
     private void Start()
     {
 
-        world = GameObject.Find("World").GetComponent<World>(); // junk
+        _world = GameObject.Find("World").GetComponent<World>(); // junk
 
-        cursorItemSlot = new ItemSlot(cursorSlot);
+        _cursorItemSlot = new ItemSlot(cursorSlot);
     }
 
     private void Update()
     {
-        if (!world.inUI) return;
+        if (!_world.inUI) return;
 
         cursorSlot.transform.position = Input.mousePosition;
 
@@ -41,58 +43,55 @@ public class DragAndDropHandler : MonoBehaviour
 
     private void HandleSlotClick(UiItemSlot clickedSlot)
     {
-        if (clickedSlot == null) return;
-        if (!cursorItemSlot.HasItem && !clickedSlot.HasItem) return;
+        if (!clickedSlot) return;
+        if (!_cursorItemSlot.HasItem && !clickedSlot.HasItem) return;
 
         if (clickedSlot.itemSlot.isCreative)
         {
-                cursorItemSlot.EmptySlot();
-                cursorItemSlot.InsertItemStack(clickedSlot.itemSlot.itemStack);
+                _cursorItemSlot.EmptySlot();
+                _cursorItemSlot.InsertItemStack(clickedSlot.itemSlot.itemStack);
         }
 
-        if (!cursorItemSlot.HasItem && clickedSlot.HasItem)
+        switch (_cursorItemSlot.HasItem)
         {
-            cursorItemSlot.InsertItemStack(clickedSlot.itemSlot.TakeAll());
-            return;
-        }
-        if (cursorItemSlot.HasItem && !clickedSlot.HasItem)
-        {
-            clickedSlot.itemSlot.InsertItemStack(cursorItemSlot.TakeAll());
-            return;
-        }
-
-        if (cursorItemSlot.HasItem && clickedSlot.HasItem)
-        {
-            if (cursorItemSlot.itemStack.id != clickedSlot.itemSlot.itemStack.id)
+            case false when clickedSlot.HasItem:
+                _cursorItemSlot.InsertItemStack(clickedSlot.itemSlot.TakeAll());
+                return;
+            case true when !clickedSlot.HasItem:
+                clickedSlot.itemSlot.InsertItemStack(_cursorItemSlot.TakeAll());
+                return;
+            case true when clickedSlot.HasItem:
             {
+                if (_cursorItemSlot.itemStack.id != clickedSlot.itemSlot.itemStack.id)
+                {
                 
-                ItemStack oldCursorSlot = cursorItemSlot.TakeAll();
-                ItemStack oldItemSlot = clickedSlot.itemSlot.TakeAll();
+                    var oldCursorSlot = _cursorItemSlot.TakeAll();
+                    var oldItemSlot = clickedSlot.itemSlot.TakeAll();
 
-                clickedSlot.itemSlot.InsertItemStack(oldCursorSlot);
-                cursorItemSlot.InsertItemStack(oldItemSlot);
-            }else if (cursorItemSlot.itemStack.amount != clickedSlot.itemSlot.itemStack.amount)
-            {
-                int over = clickedSlot.itemSlot.InsertAmount(cursorItemSlot.itemStack.amount);
-                cursorItemSlot.itemStack.amount = 0;
-                cursorItemSlot.InsertAmount(over);
+                    clickedSlot.itemSlot.InsertItemStack(oldCursorSlot);
+                    _cursorItemSlot.InsertItemStack(oldItemSlot);
+                }else if (_cursorItemSlot.itemStack.amount != clickedSlot.itemSlot.itemStack.amount)
+                {
+                    var over = clickedSlot.itemSlot.InsertAmount(_cursorItemSlot.itemStack.amount);
+                    _cursorItemSlot.itemStack.amount = 0;
+                    _cursorItemSlot.InsertAmount(over);
+                }
+
+                break;
             }
         }
     }
 
     private UiItemSlot CheckForSlot()
     {
-        m_PointerEventData = new PointerEventData(m_EventSystem);
-        m_PointerEventData.position = Input.mousePosition;
-
-        List<RaycastResult> results = new List<RaycastResult>();
-        m_Raycaster.Raycast(m_PointerEventData, results);
-
-        foreach (RaycastResult result in results)
+        _mPointerEventData = new PointerEventData(mEventSystem)
         {
-            if (result.gameObject.tag == "UIItemSlot")
-                return result.gameObject.GetComponent<UiItemSlot>();
-        }
-        return null;
+            position = Input.mousePosition
+        };
+
+        var results = new List<RaycastResult>();
+        mRaycaster.Raycast(_mPointerEventData, results);
+
+        return (from result in results where result.gameObject.CompareTag("UIItemSlot") select result.gameObject.GetComponent<UiItemSlot>()).FirstOrDefault();
     }
 }

@@ -21,23 +21,17 @@ public class BlockType {
 
     //back, front, top, bottom, left, right
 
-    public int GetTextureID (int faceIndex) {
-        switch (faceIndex) {
-            case 0:
-                return backFaceTexture;
-            case 1:
-                return frontFaceTexture;
-            case 2:
-                return topFaceTexture;
-            case 3:
-                return bottomFaceTexture;
-            case 4:
-                return leftFaceTexture;
-            case 5:
-                return rightFaceTexture;
-            default:
-                Debug.LogError ($"Erro in GetTextureID, <color=read> invaled face index</color>");
-                return 0;
-        }
+    public int GetTextureID (int faceIndex)
+    {
+        return faceIndex switch
+        {
+            0 => backFaceTexture,
+            1 => frontFaceTexture,
+            2 => topFaceTexture,
+            3 => bottomFaceTexture,
+            4 => leftFaceTexture,
+            5 => rightFaceTexture,
+            _ => 0
+        };
     }
 }

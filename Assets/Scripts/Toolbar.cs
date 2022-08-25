@@ -15,28 +15,32 @@ public class Toolbar : MonoBehaviour
     {
         for (byte i = 0; i < slots.Length; i++)
         {
-            ItemStack stack = new ItemStack(System.Convert.ToByte(i + 1), Random.Range(2, 99));
-            ItemSlot slot = new ItemSlot(slots[i], stack);
+            var stack = new ItemStack(System.Convert.ToByte(i + 1), Random.Range(2, 99));
+            var slot = new ItemSlot(slots[i], stack);
         }
     }
 
     private void Update()
     {
-        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        var scroll = Input.GetAxis("Mouse ScrollWheel");
 
-        if (scroll != 0)
+        switch (scroll)
         {
-            if (scroll > 0)
+            case 0:
+                return;
+            case > 0:
                 slotIndex--;
-            else
+                break;
+            default:
                 slotIndex++;
-
-            if (slotIndex > slots.Length - 1)
-                slotIndex = 0;
-            if (slotIndex < 0)
-                slotIndex = slots.Length - 1;
-
-            highlight.position = slots[slotIndex].slotIcon.transform.position;
+                break;
         }
+
+        if (slotIndex > slots.Length - 1)
+            slotIndex = 0;
+        if (slotIndex < 0)
+            slotIndex = slots.Length - 1;
+
+        highlight.position = slots[slotIndex].slotIcon.transform.position;
     }
 }

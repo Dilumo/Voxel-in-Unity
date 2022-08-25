@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Data;
 using UnityEngine;
 
 public class World : MonoBehaviour
@@ -103,8 +104,8 @@ public class World : MonoBehaviour
 
         Random.InitState(VoxelData.seed);
 
-        Shader.SetGlobalFloat("minGlobalLightLevel", VoxelData.minLightLevel);
-        Shader.SetGlobalFloat("maxGlobalLightLevel", VoxelData.maxLightLevel);
+        Shader.SetGlobalFloat("minGlobalLightLevel", VoxelData.MinLightLevel);
+        Shader.SetGlobalFloat("maxGlobalLightLevel", VoxelData.MaxLightLevel);
 
         LoadWorld();
 
@@ -164,8 +165,8 @@ public class World : MonoBehaviour
 
     void LoadWorld()
     {
-        for (int x = (VoxelData.WorldSizeInChunks / 2) - Settings.LoadDistance; x < (VoxelData.WorldSizeInChunks / 2) + Settings.LoadDistance; x++)
-            for (int z = (VoxelData.WorldSizeInChunks / 2) - Settings.LoadDistance; z < (VoxelData.WorldSizeInChunks / 2) + Settings.LoadDistance; z++)
+        for (int x = (VoxelData.WorldSizeInChunks / 2) - Settings.loadDistance; x < (VoxelData.WorldSizeInChunks / 2) + Settings.loadDistance; x++)
+            for (int z = (VoxelData.WorldSizeInChunks / 2) - Settings.loadDistance; z < (VoxelData.WorldSizeInChunks / 2) + Settings.loadDistance; z++)
             {
                 worldData.LoadChunk(new Vector2Int(x, z));
             }
@@ -188,8 +189,8 @@ public class World : MonoBehaviour
     void UpdateChunks()
     {
         chunksToUpdate[0].UpdateChunk();
-        if (!activesChunks.Contains(chunksToUpdate[0].Coord))
-            activesChunks.Add(chunksToUpdate[0].Coord);
+        if (!activesChunks.Contains(chunksToUpdate[0].coord))
+            activesChunks.Add(chunksToUpdate[0].coord);
         chunksToUpdate.RemoveAt(0);
     }
 
@@ -243,8 +244,8 @@ public class World : MonoBehaviour
 
         activesChunks.Clear();
 
-        for (int x = coord.x - Settings.ViewDistanceInChunks; x < coord.x + Settings.ViewDistanceInChunks; x++)
-            for (int z = coord.z - Settings.ViewDistanceInChunks; z < coord.z + Settings.ViewDistanceInChunks; z++)
+        for (int x = coord.x - Settings.viewDistanceInChunks; x < coord.x + Settings.viewDistanceInChunks; x++)
+            for (int z = coord.z - Settings.viewDistanceInChunks; z < coord.z + Settings.viewDistanceInChunks; z++)
             {
                 newCoord = new ChunkCoord(x, z);
 

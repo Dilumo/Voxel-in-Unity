@@ -1,51 +1,42 @@
 ﻿public class ItemSlot
 {
     public ItemStack itemStack;
-    private UiItemSlot uiItemSlot;
+    private UiItemSlot _uiItemSlot;
 
-    public int maxAmount = 64;
+    private const int MaxAmount = 64;
 
     public bool isCreative;
 
-    public bool HasItem
-    {
-        get
-        {
-            if (itemStack == null)
-                return false;
-            else
-                return true;
-        }
-    }
+    public bool HasItem => itemStack != null;
 
     public ItemSlot(UiItemSlot uiItem)
     {
         itemStack = null;
-        uiItemSlot = uiItem;
-        uiItemSlot.Link(this);
+        _uiItemSlot = uiItem;
+        _uiItemSlot.Link(this);
     }
 
     public ItemSlot(UiItemSlot uiItem, ItemStack itemStackValue)
     {
         itemStack = itemStackValue;
-        uiItemSlot = uiItem;
-        uiItemSlot.Link(this);
+        _uiItemSlot = uiItem;
+        _uiItemSlot.Link(this);
     }
 
     public void LinkUISlot(UiItemSlot uiItem)
     {
-        uiItemSlot = uiItem;
+        _uiItemSlot = uiItem;
     }
     public void UnlinkUISlot()
     {
-        uiItemSlot = null;
+        _uiItemSlot = null;
     }
 
     public void EmptySlot()
     {
         itemStack = null;
-        if (uiItemSlot != null)
-            uiItemSlot.UpdateSlot();
+        if (_uiItemSlot)
+            _uiItemSlot.UpdateSlot();
     }
 
     public int Take(int amt)
@@ -59,7 +50,7 @@
         else if (amt < itemStack.amount)
         {
             itemStack.amount -= amt;
-            uiItemSlot.UpdateSlot();
+            _uiItemSlot.UpdateSlot();
             return amt;
         }
         else
@@ -78,22 +69,22 @@
 
     public int InsertAmount(int amt)
     {
-        int calcAmt = amt + itemStack.amount;
-        if (calcAmt >= maxAmount)
+        var calcAmt = amt + itemStack.amount;
+        if (calcAmt >= MaxAmount)
         {
-            itemStack.amount = maxAmount;
-            uiItemSlot.UpdateSlot();
-            return calcAmt - maxAmount;
+            itemStack.amount = MaxAmount;
+            _uiItemSlot.UpdateSlot();
+            return calcAmt - MaxAmount;
         }
 
         itemStack.amount += amt;
-        uiItemSlot.UpdateSlot();
+        _uiItemSlot.UpdateSlot();
         return 0;
     }
 
     public void InsertItemStack(ItemStack stack)
     {
         itemStack = stack;
-        uiItemSlot.UpdateSlot();
+        _uiItemSlot.UpdateSlot();
     }
 }
